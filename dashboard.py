@@ -39,7 +39,7 @@ def render_dashboard():
         
         variable = col1.selectbox(
         'Select variable to measure',
-        ('carbonfootprintsaved', 'Lossineurossaved', 'repairingcostssaved', 'predicted incidence'))
+        ('carbonfootprintsaved', 'Lossineurossaved', 'repairingcostsaved', 'predicted incidence'))
 
         top = col3.selectbox(
         'Select number of features',
