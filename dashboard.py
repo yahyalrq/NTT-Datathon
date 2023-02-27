@@ -5,6 +5,7 @@ from utils import load_dataset
 from utils import process_dataset
 import altair as alt
 import requests
+import plotly.graph_objs as go
 
 def render_dashboard():
     st.markdown(""" 
@@ -156,6 +157,120 @@ def render_dashboard():
 
         st.subheader('Top 20 Costly Pipes')
         st.bar_chart(df.groupby(["PipeId"])["Lossineuros"].mean().sort_values(ascending=False).head(20), height=500, use_container_width=True)
+
+        # create a DataFrame from the data
+        # create a DataFrame from the data
+        data = {'x': [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
+                'y': [4.232157e+06, 8.754028e+06, 7.286916e+06, 8.783938e+06, 9.808856e+06, 6.291756e+06, 6.169941e+06, 6.028724e+06, 6.517783e+06],
+                'y1': [2.581113e+06, 7.882824e+06, 6.861091e+06, 7.208642e+06, 8.830624e+06, 5.280194e+06, 4.789427e+06, 4.736429e+06, 5.177284e+06]}
+        df = pd.DataFrame(data)
+
+        # calculate the difference between y and y1
+        diff = df['y'] - df['y1']
+
+        # create traces for two sets of bars
+        trace1 = go.Bar(x=df['x'], y=df['y'], name='Standard Strategy', marker=dict(color='red', opacity=0.5), width=0.4)
+        trace2 = go.Bar(x=df['x'], y=df['y1'], name='Bayes Genes Strategy', marker=dict(color='green', opacity=1), width=0.4)
+
+        # create the figure object and add the traces
+        fig = go.Figure(data=[trace1, trace2])
+
+        # calculate the difference between the two bar plots for each year
+        diff = df['y'] - df['y1']
+        cumulative_diff = [sum(diff[:i]) for i in range(1, len(diff)+1)]
+        # create a trace for the difference bars
+        trace3 = go.Bar(x=df['x'], y=diff, name='Difference', marker=dict(color='blue'), width=0.4)
+
+        # add the frames to the figure
+        frames = [go.Frame(data=[go.Bar(x=df['x'], y=df['y'], name='Standard Strategy', marker=dict(color='red', opacity=0.5), width=0.4),
+                                go.Bar(x=df['x'], y=df['y1'], name='Bayes Genes Strategy', marker=dict(color='green', opacity=1), width=0.4),
+                                go.Bar(x=df['x'], y=[0]*len(df), name='Difference', marker=dict(color='blue'), width=0.4, base=df['y1'])],
+                        layout=go.Layout(title_text=f'Total Money Saved over 10 years: {diff:.2f}')) for diff in cumulative_diff]
+        fig.frames = frames
+
+        # add the animation buttons to the figure
+        fig.update_layout(updatemenus=[{'type': 'buttons', 'buttons':
+                                        [{'label': 'Play', 'method': 'animate', 'args': [None, {'frame': {'duration': 500, 'redraw': True}, 'fromcurrent': True, 'transition': {'duration': 0}}]}, {'label': 'Pause', 'method': 'animate', 'args': [[None], {'frame': {'duration': 0, 'redraw': False}, 'mode': 'immediate', 'transition': {'duration': 0}}]}]}])
+
+        # update the layout with axis labels and title
+        fig.update_layout(xaxis=dict(title='Year'), yaxis=dict(title='Gaz Leakage volume in Million €'), title='Comparison of Gaz Leakage Volume Loss in Million € between strategies')
+
+        fig.update_layout(width=1350, height=600)
+        # show the plot
+        st.plotly_chart(fig)
+
+
+        ##############################################################################################################################
+        
+        # create a DataFrame from the data
+        data = {'x': [2012,2013,2014,2015,2016,2017,2018,2019,2020],
+                'y': [34.032613,70.404732,58.600260,70.645290,78.880759,50.583559,49.608760,47.613030,51.779836],
+                'y1': [17.183879,58.686933,53.608836,65.043593,70.355444,45.331962,40.533987,40.399639,44.114284]}
+        data = pd.DataFrame(data)
+
+        # create a stacked bar chart
+        fig = go.Figure(data=[
+            go.Bar(name='Bayes Genes Strategy', x=data['x'], y=data['y'], marker_color='red',opacity=0.5),
+            go.Bar(name='Standard Strategy', x=data['x'], y=data['y1'], marker_color='green',opacity=1)
+        ])
+
+        diff = data['y'] - data['y1']
+        cumulative_diff = [sum(diff[:i]) for i in range(1, len(diff)+1)]
+        # create a trace for the difference bars
+        trace3 = go.Bar(x=data['x'], y=diff, name='Difference', marker=dict(color='blue'), width=0.4)
+
+        # add the frames to the figure
+        frames = [go.Frame(data=[go.Bar(x=data['x'], y=data['y'], name='Standard Strategy', marker=dict(color='red', opacity=0.5), width=0.4),
+                                go.Bar(x=data['x'], y=data['y1'], name='Bayes Genes Strategy', marker=dict(color='green', opacity=1), width=0.4),
+                                go.Bar(x=data['x'], y=[0]*len(data), name='Difference', marker=dict(color='blue'), width=0.4, base=data['y1'])],
+                        layout=go.Layout(title_text=f'Carbon Foot print reduced in tons of CO2 over 10 years: {diff:.2f}')) for diff in cumulative_diff]
+        fig.frames = frames
+
+        # add the animation buttons to the figure
+        fig.update_layout(updatemenus=[{'type': 'buttons', 'buttons':
+                                        [{'label': 'Play', 'method': 'animate', 'args': [None, {'frame': {'duration': 500, 'redraw': True}, 'fromcurrent': True, 'transition': {'duration': 0}}]}, {'label': 'Pause', 'method': 'animate', 'args': [[None], {'frame': {'duration': 0, 'redraw': False}, 'mode': 'immediate', 'transition': {'duration': 0}}]}]}])
+
+        # update layout
+        fig.update_layout(
+            xaxis_title='Year',
+            yaxis_title='CO2 emitted in Tons',
+            title='Comparison of Carbon Footprint emitted in Tons of CO2 between strategies'
+        )
+
+        fig.update_layout(width=1350, height=600)
+        # show the plot
+        st.plotly_chart(fig)
+        ########################################################################################################################
+
+        # create a DataFrame from the data
+        data = {'x': [2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],
+                'y': [ 854.675374,144786.244274,534733.809074,874932.392092,778690.496825,632780.470087,707766.169593,688486.445204,642022.133440,741444.699507,712478.037770],
+                'y1': [854.675374,140147.507467,381028.689501,792284.008407,639223.057329,555808.344323,651871.609327,600739.379187,591560.285965,688237.076837,691139.569360]}
+        data = pd.DataFrame(data)
+
+        # create a line plot
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=data['x'], y=data['y'], name='Standard Strategy', mode='lines+markers', line=dict(color='red')))
+        fig.add_trace(go.Scatter(x=data['x'], y=data['y1'], name='Bayes Genes Strategy', mode='lines+markers', line=dict(color='green')))
+
+
+
+
+        # set the axis labels and title
+        fig.update_layout(
+            xaxis_title='Year',
+            yaxis_title='Repairing Costs in €',
+            title='Comparison of Repairing Costs in Euros between strategies'
+        )
+
+        fig.update_layout(width=1350, height=600)
+        
+        st.plotly_chart(fig)
+
+# show the plot
+
+
+
         #col1.bar_chart(df[df['Extra-fuel']>=0]['Extra-fuel'], use_container_width=True)
 
     #st.subheader('Count of 20 Most Frequent Teledyne Weights')
