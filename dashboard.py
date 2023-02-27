@@ -39,7 +39,7 @@ def render_dashboard():
         
         variable = col1.selectbox(
         'Select variable to measure',
-        ('carbonfootprintsaved', 'Lossineurossaved', 'repairingcostssaved', 'predicted incidence'))
+        ('carbonfootprintsaved', 'Lossineurossaved', 'repairingcostsaved', 'predicted incidence'))
 
         top = col3.selectbox(
         'Select number of features',
@@ -197,7 +197,7 @@ def render_dashboard():
 
         fig.update_layout(width=1350, height=600)
         # show the plot
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
 
         ##############################################################################################################################
@@ -237,9 +237,9 @@ def render_dashboard():
             title='Comparison of Carbon Footprint emitted in Tons of CO2 between strategies'
         )
 
-        fig.update_layout(width=1350, height=600)
+        fig.update_layout(width=1000, height=600)
         # show the plot
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
         ########################################################################################################################
 
         # create a DataFrame from the data
@@ -265,7 +265,7 @@ def render_dashboard():
 
         fig.update_layout(width=1350, height=600)
         
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
 # show the plot
 

@@ -57,25 +57,34 @@ def render_forecast():
         towns = towns.reset_index()
         res = requests.get("https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson")
         # create a density heatmap on Mapbox with the incidence column
-        fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z='Lossineurossaved', radius=60,center=dict(lat=40, lon=-3), zoom=5,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=['Lossineurossaved'],color_continuous_scale='Magma')
+        fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z='Lossineurossaved', radius=20,center=dict(lat=40, lon=-3), zoom=5,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=['Lossineurossaved'],color_continuous_scale='Magma')
         # add the provincial boundaries as a layer
-        fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title="Loss in Euros saved",thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix="Loss in euros saved"),title=dict(text="Loss in euros saved within the selected timeline",font=dict(size=24)))
+        fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title="Loss in Euros saved in Millions of €",thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix=" €"),title=dict(text="Loss in euros saved within the selected timeline",font=dict(size=24)))
         fig.update_layout(width=1200, height=600)
         st.plotly_chart(fig)
     else:
         if metric=="Volume costs saved":
             metric="Lossineurossaved"
+            metric_title= "Volume costs saved in Millions of €"
+            color='blues'
+            sufix_metrics=" €"
         elif metric=="Repairing costs saved":
-            metric="repairingcostssaved"
+            metric="repairingcostsaved"
+            color='inferno'
+            metric_title= "Repairing costs saved in 100k of €"
+            sufix_metrics=" €"
         else:
             metric="carbonfootprintsaved"
+            color= 'Greens'
+            metric_title= "Carbon footprint saved in Tones of CO2"
+            sufix_metrics= " Tones"
         towns = filtered_df.groupby("Town")[["latitude", "longitude", metric]].agg({"latitude": "first", "longitude": "first", metric: "sum"})
         towns = towns.reset_index()
         res = requests.get("https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson")
         # create a density heatmap on Mapbox with the incidence column
-        fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z=metric , radius=60,center=dict(lat=40, lon=-3), zoom=5,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=[metric],color_continuous_scale='Greens')
+        fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z=metric , radius=20,center=dict(lat=40, lon=-3), zoom=5,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=[metric],color_continuous_scale=color)
         # add the provincial boundaries as a layer
-        fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title=f'{metric}',thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix=f'{metric}'),title=dict(text="f'{metric}' within the selected timeline",font=dict(size=24)))
+        fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title=f'{metric_title}',thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix=f'{sufix_metrics}'),title=dict(text="f'{metric}' within the selected timeline",font=dict(size=24)))
         fig.update_layout(width=1200, height=600)
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
     
