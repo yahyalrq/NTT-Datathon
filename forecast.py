@@ -90,4 +90,4 @@ def render_forecast():
 
         filtered_df['InspectionDate'] = pd.to_datetime(filtered_df['InspectionDate']).dt.date
         grouped = filtered_df.groupby(['InspectionDate','Province'])['PipeId'].apply(lambda x: list(x)).groupby('InspectionDate').head(5).reset_index()
-        st.dataframe(grouped)
+        st.dataframe(grouped,height=600,width=900)

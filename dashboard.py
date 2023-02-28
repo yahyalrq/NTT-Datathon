@@ -140,9 +140,9 @@ def render_dashboard():
             towns= towns.reset_index()
             res = requests.get("https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson")
             # create a density heatmap on Mapbox with the incidence column
-            fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z='Lossineuros', radius=60,center=dict(lat=40, lon=-3), zoom=5,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=['Lossineuros'],color_continuous_scale='Magma')
+            fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z='Lossineuros', radius=20,center=dict(lat=40, lon=-3), zoom=5,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=['Lossineuros'],color_continuous_scale='Magma')
             # add the provincial boundaries as a layer
-            fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title="Incidence",thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix=" Incidences"),title=dict(text="Pipe Gas Incidences by Province (2010-2020)",font=dict(size=24)))
+            fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title="Loss in euros ",thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix="Loss in euros "),title=dict(text="Loss in euros in top 20 Towns (2010-2020)",font=dict(size=24)))
             fig.update_layout(width=600, height=400)
             st.plotly_chart(fig)
         #my_dict = dict(zip(top20twgc['Town'], top20twgc['Lossineuros']))
