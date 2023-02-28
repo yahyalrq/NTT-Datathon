@@ -136,14 +136,14 @@ def render_dashboard():
             top20twgc_sorted = top20twgc.sort_values()
             st.bar_chart(top20twgc_sorted, height=500, use_container_width=True)
         with col2:
-            towns=df.groupby("Town")[["latitude", "longitude", "Lossineuros"]].agg({"latitude": "first", "longitude": "first", "Lossineuros": "mean"}).sort_values(by="Lossineuros", ascending=False).head(20)
-            towns= towns.reset_index()
+            towns = df.groupby("Town")[["latitude", "longitude", "Lossineurossaved"]].agg({"latitude": "first", "longitude": "first", "Lossineurossaved": "sum"})
+            towns = towns.reset_index()
             res = requests.get("https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/spain-provinces.geojson")
             # create a density heatmap on Mapbox with the incidence column
-            fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z='Lossineuros', radius=20,center=dict(lat=40, lon=-3), zoom=5,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=['Lossineuros'],color_continuous_scale='Magma')
+            fig = px.density_mapbox(towns, lat='latitude', lon='longitude', z='Lossineurossaved', radius=20,center=dict(lat=40, lon=-3), zoom=50,mapbox_style='carto-positron', opacity=1,hover_name='Town', hover_data=['Lossineurossaved'],color_continuous_scale='Magma')
             # add the provincial boundaries as a layer
-            fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title="Loss in euros ",thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix="Loss in euros "),title=dict(text="Loss in euros in top 20 Towns (2010-2020)",font=dict(size=24)))
-            fig.update_layout(width=600, height=400)
+            fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title="Loss in Euros saved in Millions of €",thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix=" €"),title=dict(text="Loss in euros saved within the selected timeline",font=dict(size=24)))
+            #fig.update_layout(width=1200, height=600)
             st.plotly_chart(fig)
         #my_dict = dict(zip(top20twgc['Town'], top20twgc['Lossineuros']))
         #sortedtowns = sorted(my_dict.items(), key=lambda x: x[1], reverse=True)
@@ -162,7 +162,7 @@ def render_dashboard():
         # create a DataFrame from the data
         data = {'x': [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
                 'y': [4.232157e+06, 8.754028e+06, 7.286916e+06, 8.783938e+06, 9.808856e+06, 6.291756e+06, 6.169941e+06, 6.028724e+06, 6.517783e+06],
-                'y1': [2.581113e+06, 7.882824e+06, 6.861091e+06, 7.208642e+06, 8.830624e+06, 5.280194e+06, 4.789427e+06, 4.736429e+06, 5.177284e+06]}
+                'y1': [2.581113e+06, 7.882824e+06, 6.861091e+06, 7.508642e+06, 8.830624e+06, 5.700194e+06, 4.789427e+06, 5.6429e+06, 5.177284e+06]}
         df = pd.DataFrame(data)
 
         # calculate the difference between y and y1
@@ -184,7 +184,7 @@ def render_dashboard():
         # add the frames to the figure
         frames = [go.Frame(data=[go.Bar(x=df['x'], y=df['y'], name='Standard Strategy', marker=dict(color='red', opacity=0.5), width=0.4),
                                 go.Bar(x=df['x'], y=df['y1'], name='Bayes Genes Strategy', marker=dict(color='green', opacity=1), width=0.4),
-                                go.Bar(x=df['x'], y=[0]*len(df), name='Difference', marker=dict(color='blue'), width=0.4, base=df['y1'])],
+                                go.Bar(x=df['x'], y=[0]*len(df), name='Difference', marker=dict(color='blue'), width=0.4, base=df['y1'], textposition='auto', text=diff, textfont=dict(size=30))],
                         layout=go.Layout(title_text=f'Total Money Saved over 10 years: {diff:.2f}')) for diff in cumulative_diff]
         fig.frames = frames
 
@@ -196,6 +196,7 @@ def render_dashboard():
         fig.update_layout(xaxis=dict(title='Year'), yaxis=dict(title='Gaz Leakage volume in Million €'), title='Comparison of Gaz Leakage Volume Loss in Million € between strategies')
 
         fig.update_layout(width=1350, height=600)
+        fig.update_layout(plot_bgcolor='black')
         # show the plot
         st.plotly_chart(fig, use_container_width=True)
 
@@ -238,6 +239,7 @@ def render_dashboard():
         )
 
         fig.update_layout(width=1000, height=600)
+        fig.update_layout(plot_bgcolor='black')
         # show the plot
         st.plotly_chart(fig, use_container_width=True)
         ########################################################################################################################
@@ -264,7 +266,7 @@ def render_dashboard():
         )
 
         fig.update_layout(width=1350, height=600)
-        
+        fig.update_layout(plot_bgcolor='black')        
         st.plotly_chart(fig, use_container_width=True)
 
 # show the plot
