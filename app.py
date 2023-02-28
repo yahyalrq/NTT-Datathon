@@ -6,6 +6,7 @@ from creators import render_creators
 
 st.set_page_config(page_title=None, page_icon=None, layout="wide")
 
+
 selected = option_menu(
     menu_title= None,
     options= ['Strategy', 'Dashboard', 'Creators'],

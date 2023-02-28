@@ -87,4 +87,7 @@ def render_forecast():
         fig.update_layout(mapbox_layers=[{"sourcetype": "geojson","source": res.json(),"type": "line","color": "blue","line": {"width": 0.3},}],mapbox=dict(center=dict(lat=40, lon=-3),zoom=5,style="carto-positron"),margin={"r":0,"t":0,"l":0,"b":0},coloraxis_colorbar=dict(title=f'{metric_title}',thicknessmode="pixels", thickness=20,lenmode="pixels", len=300,yanchor="middle", y=0.5,ticks="outside", ticksuffix=f'{sufix_metrics}'),title=dict(text="f'{metric}' within the selected timeline",font=dict(size=24)))
         fig.update_layout(width=1200, height=600)
         st.plotly_chart(fig, use_container_width=True)
-    
+
+        filtered_df['InspectionDate'] = pd.to_datetime(filtered_df['InspectionDate']).dt.date
+        grouped = filtered_df.groupby(['InspectionDate','Province'])['PipeId'].apply(lambda x: list(x)).groupby('InspectionDate').head(5).reset_index()
+        st.dataframe(grouped)

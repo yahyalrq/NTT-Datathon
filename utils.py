@@ -19,5 +19,5 @@ def process_dataset(df):
     df["Lossineurossaved"]=df["Lossineuros"]-df["pLossineuros"]
     df.loc[df['Lossineurossaved'] < 0, 'Lossineurossaved'] = 0
     df["carbonfootprintsaved"]=df["carbonfootprintemitted"]-df["pcarbonfootprintemitted"]
-    df.loc[df['carbonfootprintsaved'] < 0, 'carbonfootprintsaved'] = 0
+    #df.loc[df['carbonfootprintsaved'] < 0, 'carbonfootprintsaved'] = 0
     return df
