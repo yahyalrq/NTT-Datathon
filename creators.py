@@ -61,4 +61,4 @@ def render_creators():
         st.balloons()
         col1, col2, col3 = st.columns([1,2,1])
 
-        col2.image('imgs/qr-code.png')
+        col2.image('imgs/qr-codentt.png')

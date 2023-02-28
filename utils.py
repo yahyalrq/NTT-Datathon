@@ -12,6 +12,7 @@ def load_dataset():
 
 @st.cache(show_spinner=False)
 def process_dataset(df):
+    
     df['InspectionDate'] = pd.to_datetime(df['InspectionDate'])
     df['InspectionYear'] = df['InspectionDate'].dt.year
     df["repairingcostsaved"]=df["repairingcostassumed"]-df["prepairingcostassumed"]
